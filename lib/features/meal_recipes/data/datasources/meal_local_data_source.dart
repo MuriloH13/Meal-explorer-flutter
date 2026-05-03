@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:meal_explorer/features/meal_recipes/data/exceptions.dart';
 import 'package:meal_explorer/features/meal_recipes/data/models/meal_detail_model.dart';
 import 'package:meal_explorer/features/meal_recipes/domain/entities/meal_detail.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -27,15 +28,15 @@ class MealLocalDataSourceImpl implements MealLocalDataSource {
       );
 
       if (currentFavorites == null || currentFavorites.isEmpty) {
-        return [];
+        throw NotFoundException();
       }
 
       return currentFavorites.map((jsonString) {
         final Map<String, dynamic> jsonMap = jsonDecode(jsonString);
         return MealDetailModel.fromLocalJson(jsonMap);
       }).toList();
-    } catch (_) {
-      throw Exception();
+    } catch (e) {
+      throw LocalDataException('$e');
     }
   }
 
@@ -51,8 +52,8 @@ class MealLocalDataSourceImpl implements MealLocalDataSource {
       }).toList();
 
       await sharedPreferences.setStringList(savedFavorites, updatedFavorites);
-    } catch (_) {
-      throw Exception();
+    } catch (e) {
+      throw LocalDataException('$e');
     }
   }
 
@@ -73,8 +74,8 @@ class MealLocalDataSourceImpl implements MealLocalDataSource {
         currentFavorites.add(mealJsonEncoded);
         await sharedPreferences.setStringList(savedFavorites, currentFavorites);
       }
-    } catch (_) {
-      throw Exception();
+    } catch (e) {
+      throw LocalDataException('$e');
     }
   }
 }
