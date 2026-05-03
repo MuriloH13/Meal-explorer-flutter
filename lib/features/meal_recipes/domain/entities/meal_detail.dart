@@ -3,7 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'ingredient.dart';
 
 class MealDetail extends Equatable {
-  MealDetail({
+  const MealDetail({
     required this.id,
     required this.name,
     required this.imageUrl,

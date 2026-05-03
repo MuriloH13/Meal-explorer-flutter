@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 class Ingredient extends Equatable{
-  Ingredient({
+  const Ingredient({
     required this.name,
     required this.measure,
   });
