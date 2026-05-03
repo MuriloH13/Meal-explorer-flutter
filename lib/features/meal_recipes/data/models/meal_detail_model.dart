@@ -11,7 +11,11 @@ class MealDetailModel extends MealDetail {
     required super.ingredients,
   });
 
-  factory MealDetailModel.fromJson(Map<String, dynamic> json) {
+  static List<MealDetailModel> fromRemoteJsonList(List<dynamic> jsonList) {
+    return jsonList.map((json) => MealDetailModel.fromRemoteJson(json)).toList();
+  }
+
+  factory MealDetailModel.fromRemoteJson(Map<String, dynamic> json) {
     final List<Ingredient> ingredientModel = extractIngredients(json);
     return MealDetailModel(
       id: json['idMeal'],
