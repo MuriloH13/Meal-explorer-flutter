@@ -7,7 +7,9 @@ import 'package:http/http.dart' as http;
 
 abstract class MealRemoteDataSource {
   Future<List<MealDetail>> searchMealsByName(String name);
+
   Future<MealDetail> getMealDetailsById(String id);
+
   Future<MealDetail> getRandomMeal();
 }
 
@@ -26,17 +28,20 @@ class MealRemoteDataSourceImpl implements MealRemoteDataSource {
 
       if (response.statusCode == 200) {
         final jsonMap = jsonDecode(response.body) as Map<String, dynamic>;
-        final mealsList = jsonMap['meals'] as List<dynamic>;
+        final mealsList = jsonMap['meals'] as List<dynamic>?;
 
-        if (mealsList.isEmpty) {
+        if (mealsList == null || mealsList.isEmpty) {
           throw NotFoundException();
         }
 
-      return MealDetailModel.fromRemoteJson(mealsList.first as Map<String, dynamic>);
+        return MealDetailModel.fromRemoteJson(
+          mealsList.first as Map<String, dynamic>,
+        );
       }
 
       throw ServerException('Internal Server error');
     } catch (e) {
+      if (e is NotFoundException || e is ServerException) rethrow;
       throw InternalException('$e');
     }
   }
@@ -50,15 +55,20 @@ class MealRemoteDataSourceImpl implements MealRemoteDataSource {
 
       if (response.statusCode == 200) {
         final jsonMap = jsonDecode(response.body) as Map<String, dynamic>;
-        final mealsList = jsonMap['meals'] as List<dynamic>;
+        final mealsList = jsonMap['meals'] as List<dynamic>?;
 
-        if (mealsList.isEmpty) {
+        if (mealsList == null || mealsList.isEmpty) {
           throw NotFoundException();
         }
-        return MealDetailModel.fromRemoteJson(mealsList.first as Map<String, dynamic>);
+        return MealDetailModel.fromRemoteJson(
+          mealsList.first as Map<String, dynamic>,
+        );
       }
-      throw ServerException('Internal Server error');
+      throw ServerException(
+        'Internal Server error. Status: ${response.statusCode}',
+      );
     } catch (e) {
+      if (e is NotFoundException || e is ServerException) rethrow;
       throw InternalException('$e');
     }
   }
@@ -72,15 +82,16 @@ class MealRemoteDataSourceImpl implements MealRemoteDataSource {
 
       if (response.statusCode == 200) {
         final jsonMap = jsonDecode(response.body) as Map<String, dynamic>;
-        final mealsList = jsonMap['meals'] as List<dynamic>;
+        final mealsList = jsonMap['meals'] as List<dynamic>?;
 
-        if (mealsList.isEmpty) {
+        if (mealsList == null || mealsList.isEmpty) {
           throw NotFoundException();
         }
         return MealDetailModel.fromRemoteJsonList(mealsList);
       }
       throw ServerException('Internal Server error');
     } catch (e) {
+      if (e is NotFoundException || e is ServerException) rethrow;
       throw InternalException('$e');
     }
   }

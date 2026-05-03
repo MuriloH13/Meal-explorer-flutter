@@ -36,6 +36,7 @@ class MealLocalDataSourceImpl implements MealLocalDataSource {
         return MealDetailModel.fromLocalJson(jsonMap);
       }).toList();
     } catch (e) {
+      if (e is NotFoundException) rethrow;
       throw LocalDataException('$e');
     }
   }
